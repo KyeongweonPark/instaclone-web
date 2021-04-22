@@ -11,6 +11,12 @@ export const darkTheme = {
   bgColor: "#2c2c2c",
 };
 
+export const ourTheme = {
+  bgColor: "black",
+  fontColor: "blue",
+  borderColor: "red",
+};
+
 export const GlobalStyles = createGlobalStyle`
   ${reset}
   input {

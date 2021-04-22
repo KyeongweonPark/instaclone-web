@@ -3,12 +3,13 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useReactiveVar } from "@apollo/client";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
+import SignUp from "./screens/SignUp";
+import routes from "./screens/routes";
 import NotFound from "./screens/NotFound";
 import { ThemeProvider } from "styled-components";
 import { darkModeVar, isLoggedInVar } from "./apollo";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
-import SignUp from "./screens/SignUp";
-import routes from "./screens/routes";
+import { HelmetProvider } from "react-helmet-async";
 
 // const Container = styled.div`
 //   background-color: ${(props) => props.theme.bgColor};
@@ -17,7 +18,10 @@ import routes from "./screens/routes";
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const darkMode = useReactiveVar(darkModeVar);
+  
   return (
+    
+    <HelmetProvider>
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <GlobalStyles />
       <Router>
@@ -34,6 +38,7 @@ function App() {
         </Switch>
       </Router>
     </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

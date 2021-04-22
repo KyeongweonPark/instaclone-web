@@ -8,6 +8,7 @@ import Input from "../components/auth/Input";
 import FormBox from "../components/auth/FormBox";
 import BottomBox from "./BottomBox";
 import { FatLink } from "../components/shared";
+import PageTitle from "../components/PageTitle";
 // import { darkModeVar, isLoggedInVar } from "../apollo";
 
 const HeaderContainer = styled.div`
@@ -25,6 +26,7 @@ const Subtitle = styled(FatLink)`
 const SignUp = () => {
   return (
     <AuthLayout>
+        <PageTitle title="Sign up" />
       <FormBox>
         <HeaderContainer>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
@@ -45,6 +47,7 @@ const SignUp = () => {
         link={routes.home}
         linkText="Log In"
       />
+      
     </AuthLayout>
   );
 };
