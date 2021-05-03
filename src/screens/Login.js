@@ -14,8 +14,10 @@ import BottomBox from "./BottomBox";
 import PageTitle from "../components/PageTitle";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client";
+import { logUserIn } from "../apollo";
+import { useLocation } from "react-router";
 // import { darkModeVar, isLoggedInVar } from "../apollo";
 
 const FasebookLogin = styled.div`
@@ -26,6 +28,9 @@ const FasebookLogin = styled.div`
   }
 `;
 
+const Notification = styled.div`
+  color: #2ecc71;
+`;
 const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
@@ -37,17 +42,39 @@ const LOGIN_MUTATION = gql`
 `;
 
 const Login = () => {
-  const { register, handleSubmit, errors, formState, getValues } = useForm({
+  const location = useLocation();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    getValues,
+    setError,
+    clearErrors,
+  } = useForm({
     mode: "onChange",
+    defaultValues:{
+      username: location?.state?.username|| "",
+      password: location?.state?.password || "",
+    }
   });
   const onCompleted = (data) => {
-    console.log(data);
+    const {
+      login: { ok, error, token },
+    } = data;
+    if (!ok) {
+      return setError("result", {
+        message: error,
+      });
+    }
+    if (token) {
+      logUserIn(token);
+    }
   };
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
   const onSubmitValid = (data) => {
-    // console.log(data);
     if (loading) {
       return;
     }
@@ -56,14 +83,17 @@ const Login = () => {
       variables: { username, password },
     });
   };
+  const clearLoginError = () => {
+    clearErrors("result");
+  };
   return (
     <AuthLayout>
-      {/* <Helmet>Login | Paper</Helmet> */}
       <PageTitle title="Login" />
       <FormBox>
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
+        <Notification>{location?.state?.message}</Notification>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             ref={register({
@@ -73,6 +103,7 @@ const Login = () => {
                 message: "Username should be longer than 5 characters.",
               },
             })}
+            onChange={clearLoginError}
             name="username"
             type="text"
             placeholder="Username"
@@ -87,6 +118,7 @@ const Login = () => {
             type="password"
             placeholder="Password"
             hasError={Boolean(errors?.password?.message)}
+            onChange={clearLoginError}
           />
           <FormError message={errors?.password?.message} />
           <Button
@@ -95,6 +127,7 @@ const Login = () => {
             disabled={!formState.isValid || loading}
           />
         </form>
+        <FormError message={errors?.result?.message} />
         <Separator />
         <FasebookLogin>
           <FontAwesomeIcon icon={faFacebookSquare} size="2x" />

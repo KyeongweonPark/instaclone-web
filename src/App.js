@@ -10,6 +10,7 @@ import { ThemeProvider } from "styled-components";
 import { darkModeVar, isLoggedInVar } from "./apollo";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 import { HelmetProvider } from "react-helmet-async";
+import Layout from "./components/Layout";
 
 // const Container = styled.div`
 //   background-color: ${(props) => props.theme.bgColor};
@@ -27,7 +28,7 @@ function App() {
       <Router>
         <Switch>
           <Route path={routes.home} exact>
-            {isLoggedIn ? <Home /> : <Login />}
+            {isLoggedIn ? <Layout><Home /></Layout> : <Login />}
           </Route>
           {!isLoggedIn ? (
             <Route path={routes.SignUp}>
