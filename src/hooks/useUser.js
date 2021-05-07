@@ -18,7 +18,6 @@ function useUser() {
     skip: !hasToken,
   });
   useEffect(() => {
-    console.log(data);
     if (data?.me === null) {
       logUserOut();
     }
