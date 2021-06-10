@@ -61,13 +61,17 @@ function Header() {
             <>
               <IconsContainer>
                 <Icon>
+                  <Link to={routes.home}>
                   <FontAwesomeIcon icon={faHome} size="lg" />
+                  </Link>
                 </Icon>
                 <Icon>
                   <FontAwesomeIcon icon={faCompass} size="lg" />
                 </Icon>
                 <Icon>
+                  <Link to={`/users/${data?.me?.username}`}>
                   <Avatar url={data?.me?.avatar} />
+                  </Link>
                 </Icon>
               </IconsContainer>
             </>

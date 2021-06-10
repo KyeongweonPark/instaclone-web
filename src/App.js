@@ -11,6 +11,7 @@ import { darkModeVar, isLoggedInVar } from "./apollo";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 import { HelmetProvider } from "react-helmet-async";
 import Layout from "./components/Layout";
+import Profile from "./screens/Profile";
 
 // const Container = styled.div`
 //   background-color: ${(props) => props.theme.bgColor};
@@ -19,26 +20,36 @@ import Layout from "./components/Layout";
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const darkMode = useReactiveVar(darkModeVar);
-  
+
   return (
-    
     <HelmetProvider>
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <GlobalStyles />
-      <Router>
-        <Switch>
-          <Route path={routes.home} exact>
-            {isLoggedIn ? <Layout><Home /></Layout> : <Login />}
-          </Route>
-          {!isLoggedIn ? (
-            <Route path={routes.SignUp}>
-              <SignUp />
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <GlobalStyles />
+        <Router>
+          <Switch>
+            <Route path={routes.home} exact>
+              {isLoggedIn ? (
+                <Layout>
+                  <Home />
+                </Layout>
+              ) : (
+                <Login />
+              )}
             </Route>
-          ) : null}
-          <NotFound />
-        </Switch>
-      </Router>
-    </ThemeProvider>
+            {!isLoggedIn ? (
+              <Route path={routes.SignUp}>
+                <SignUp />
+              </Route>
+            ) : null}
+            <Route path={`/users/:username`}>
+              <Layout>
+                <Profile />
+              </Layout>
+            </Route>
+            <NotFound />
+          </Switch>
+        </Router>
+      </ThemeProvider>
     </HelmetProvider>
   );
 }

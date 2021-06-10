@@ -13,6 +13,7 @@ import { FatText } from "../shared";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
 import Comments from "./Comments";
+import { Link } from "react-router-dom";
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -80,6 +81,7 @@ function Photo({
   isLiked,
   likes,
   caption,
+  createdAt,
   comments,
   commentNumber,
 }) {
@@ -90,32 +92,38 @@ function Photo({
       },
     } = result;
     if (ok) {
-      cache.writeFragment({
-        id: `Photo:${id}`,
-        fragment: gql`
-          fragment Change on Photo {
-            isLiked
-            likes
-          }
-        `,
-        data: {
-          isLiked: !isLiked,
-          likes: isLiked ? likes - 1 : likes + 1,
+      const photoId = `Photo:${id}`;
+      cache.modify({
+        id: photoId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
+          },
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
         },
       });
     }
   };
-  const [toggleLikeMutation, { loading }] = useMutation(TOGGLE_LIKE_MUTATION, {
+  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
     variables: { id },
     update: updateToggleLike,
   });
   return (
     <PhotoContainer key={id}>
       <PhotoHeader>
-        <Avatar lg url={user.avatar} />
-        <Username>{user.username}</Username>
+        <Link to={`/users/${user.username}`}>
+          <Avatar lg url={user.avatar} />
+        </Link>
+        <Link to={`/users/${user.username}`}>
+          <Username>{user.username}</Username>
+        </Link>
       </PhotoHeader>
-      <PhotoFile src={file} />
+      <PhotoFile src={file} className="photo" />
       <PhotoData>
         <PhotoActions>
           <div>
@@ -138,10 +146,12 @@ function Photo({
         </PhotoActions>
         <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
         <Comments
+          photoId={id}
           author={user.username}
           caption={caption}
           commentNumber={commentNumber}
           comments={comments}
+          createdAt={createdAt}
         />
       </PhotoData>
     </PhotoContainer>
